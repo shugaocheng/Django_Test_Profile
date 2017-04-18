@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% block title %}{{ image.title }}{% endblock %}
+{% block content %}
+<h1>{{ image.title }}</h1>
+<!--定制缩略图--->
+{% load thumbnail %}
+{% thumbnail image.image "300" as im %}
+<a href="{{ image.image.url }}">
+    <img src="{{ im.url }}" class="image-detail">
+</a>
+{% endthumbnail %}
+{% with total_likes=image.user_like.count users_like=image.user_like.all %}
+    <div class="image-info">
+        <div>
+            <span class="count">
+                <span class="total">{{ total_likes }}</span>
+                人喜欢
+                <!--{{ total_likes|pluralize}}-->
+
+            </span>
+            <!--累加浏览次数-->
+            <span class="count">
+                 <span class="total1">{{ total_views }}</span>
+                次浏览{{ total_views|pluralize:"" }}
+            </span>
+
+            <!--data-id:展示图片的id,对应视图里面的image_id-->
+            <!--data-action:展示图片的动作,用if判断是喜欢还是不喜欢-->
+            {% if request.user.is_authenticated %}
+            <a href="#" data-id="{{ image.id }}" data-action=
+                    "{% if request.user in users_like %}unlike{% endif %}like"
+                    class="like button">
+                {% if request.user not in users_like  %}
+                    喜欢
+                {% else %}
+                    取消喜欢
+                {% endif %}
+            </a>
+            {% endif %}
+        </div>
+        {{ image.description|linebreaks }}
+    </div>
+    <!--<div class="image-like">-->
+        <!--{% for user in image.user_like.all %}-->
+                <!--{% thumbnail user.profile.photo "180x180" crop="100%" as ims %}-->
+                <!--<img src="{{ ims.url }}">-->
+                <!--{% endthumbnail %}-->
+                <!--&lt;!&ndash;<img src="{{ user.profile.photo.url }}">&ndash;&gt;-->
+                <!--<p></p><a href="{{ user.get_absolute_url }}">{{ user.username }}</a>-->
+        <!--{% empty %}-->
+                <!--没有人喜欢这张图片-->
+        <!--{% endfor %}-->
+    <!--</div>-->
+        <div class="image-likes">
+            {% for user in image.user_like.all %}
+                <div>
+                    <p>喜欢该图片的用户</p>
+                    <a href="{{ user.get_absolute_url }}">
+                    <img src="{{ user.profile.photo.url }}"></a>
+                    <p><a href="{{ user.get_absolute_url }}">{{ user.username }}</a></p>
+                </div>
+            {% empty %}
+                Nobody likes this image yet.
+            {% endfor %}
+        </div>
+{% endwith %}
+{% endblock %}
+<!--关注或取消-->
+{% block domready %}
+    $('a.like').click(function(e){
+        e.preventDefault();
+        $.post('{% url "images:like" %}',
+            {
+                id: $(this).data('id'),
+                action: $(this).data('action')
+            },
+            function(data){
+                if (data['status'] == 'ok')
+                {
+                    var previous_action = $('a.like').data('action');
+
+                    // toggle data-action
+                    $('a.like').data('action', previous_action == 'like' ? 'unlike' : 'like');
+                    // toggle link text
+                    $('a.like').text(previous_action == 'like' ? 'Unlike' : 'Like');
+
+                    // update total likes
+                    var previous_likes = parseInt($('span.count .total').text());
+                    $('span.count .total').text(previous_action == 'like' ? previous_likes + 1 : previous_likes - 1);
+                }
+        });
+    });
+{% endblock %}

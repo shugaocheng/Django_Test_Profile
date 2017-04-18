@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}招聘信息{% endblock %}
+{% block content %}
+<table width="95%" border="1" cellpadding="2" cellspacing="1" style="table-layout:fixed;">
+ <tr>
+  <th align="center">发布日期</th>
+  <th align="center">岗位名称</th>
+  <th align="center">公司名称</th>
+  <th align="center">薪资</th>
+  <th align="center">经验</th>
+  <th align="center">城市</th>
+  <th align="center">招聘人数</th>
+  <th align="center">上班地址</th>
+  <th align="center">学历</th>
+ </tr>
+ {% for j in all_job %}
+ <tr>
+  <td align="center" >{{ j.fbrq }}</td>
+  <td align="center">{{ j.gwname }}</td>
+  <td align="center">{{ j.gsname }}</td>
+  <td align="center">{{ j.xinzi }}</td>
+  <td align="center">{{ j.jingyan }}</td>
+  <td align="center">{{ j.gzdd }}</td>
+  <td align="center">{{ j.renshu }}</td>
+  <td align="center">{{ j.sbdz }}</td>
+  <td align="center">{{ j.xueli }}</td>
+ </tr>
+ {% endfor %}
+</table>
+{% endblock %}

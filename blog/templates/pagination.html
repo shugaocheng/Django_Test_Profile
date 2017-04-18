@@ -1,0 +1,25 @@
+
+<div class="pagination">
+    <span class="blog_footer_tip">
+        共{{object_list.count}}篇博文。当前第{{posts.number}}页，共{{page.paginator.num_pages}}页
+    </span>
+    <span class="step-links">
+        {% if page.has_previous %}
+        <a href="?page={{ page.previous_page_number }}">上一页</a>
+        {% endif %}
+        <span class="current">
+            Page {{ page.number }} of {{ page.paginator.num_pages }}
+        </span>
+        <!--<ul class="pagination">-->
+        {% for pages in page.paginator.page_range %}
+        <!--<li class="active">-->
+        <a href="?page={{ pages }}">{{ pages }}</a>
+        <!--</li>-->
+        {% endfor %}
+        </ul>
+        {% if page.has_next %}
+        <a rel="nofollow" href="?page={{ page.next_page_number }}">下一页</a>
+        {% endif %}
+    </span>
+</div>
+

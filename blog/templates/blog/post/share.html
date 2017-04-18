@@ -1,0 +1,17 @@
+{% extends "blog/base.html" %}
+{% block title %}游历尘埃 - 邮件{% endblock %}
+{% block content %}
+    {% if sent %}
+    <h1>E-mail发送成功</h1>
+    <p>
+        "{{ post.title }}" 已成功至 {{ to }}的邮箱📮
+    </p>
+    {% else %}
+    <h1>分享"{{ post.title }}"到邮箱📮 </h1>
+    <form action="" method="POST">
+        {{ form.as_p }}
+        {% csrf_token %}
+        <input type="submit" value="发送">
+    </form>
+    {% endif %}
+{% endblock %}

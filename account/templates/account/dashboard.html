@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}仪表盘{% endblock %}
+{% block content %}
+    <h1>仪表盘</h1>
+    {% with total_images_created=request.user.image_created.count %}
+    <p>欢迎{{ request.user.username }}回来.
+        你有{{ total_images_created }}张图片标签 {{ total_images_created|pluralize:"" }}</p>
+    {% endwith %}
+        <p>以下按钮拖到您的书签工具栏书签图像从其他网站 → <a href="javascript:{% include "bookmarklet_launcher.js" %}" class="button">Bookmark it!</a><p>
+    <p>你可以<a href="{% url "edit" %}">修改个人资料</a>
+        或者<a href="{% url "password_change" %}">修改密码</a></p>
+    <h2>好友动态</h2>
+    <div id="action-list">
+        {% for action in actions %}
+            {% include "actions/action/detail.html" %}
+        {% endfor %}
+    </div>
+{% endblock %}
+
+{% block domready %}
+    var page = 1;
+    var empty_page = false;
+    var block_request = false;
+
+    $(window).scroll(function(){
+    var margin = $(document).height() - $(window).height() - 200;
+    if ($(window).scrollTop() > margin && empty_page == false && block_request == false){
+        block_request = true;
+        page += 1;
+        $.get('?page=' + page, function(data){
+            if(data=='')
+            {
+                empty_page = true;
+            }
+            else{
+                block_request = false;
+                $('#image-list').append(data);
+                }
+            });
+        }
+    });
+{% endblock %}

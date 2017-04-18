@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Log-in{% endblock %}
+{% block content %}
+    <h1>Log-in</h1>
+    {% if form.errors %}
+    <p>
+      你的用户名和密码不匹配.
+      请重新输入!
+    </p>
+    {% else %}
+    <p>请使用以下表单登陆:</p>
+    {% endif %}
+    <div class="login-form">
+        <form action="{% url 'login' %}" method="post">
+            <!--如果使用Django自带的login视图,则该处表单名称应为form而不是你在视图里自定义的表单name--->
+            {{ form.as_p }}
+            {% csrf_token %}
+            <!--next参数必须是一个URL,当这个参数被给于的时候,Django登录视图将会在用户登录完成后重定向到给予的URL-->
+            <input type="hidden" name="next" value="{{ next }}">
+            <p><input type="submit" value="Log-on"></p>
+        </form>
+        <p><a href="{% url 'password_reset' %}">找回密码?</a></p>
+    </div>
+    <div class="social">
+    <ul>
+        <li class="facebook"><a href="{% url "social:begin" "facebook" %}">使用Facebook登录</a></li>
+    </ul>
+    </div>
+{% endblock %}

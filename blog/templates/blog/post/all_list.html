@@ -1,0 +1,20 @@
+{% extends "blog/base.html" %}
+{% block title %}游历尘埃 - 博客{% endblock %}
+{% block content %}
+    <!--{% if request.user.is_authenticated %}-->
+    <!--<h1>{{ request.user.username }}的博客</h1>-->
+    <!--{% else %}-->
+    <!--<h1>游历尘埃</h1>-->
+    <!--{% endif %}-->
+    {% for post in posts %}
+    <h2>
+        <a href="{{ post.get_absolute_url }}">
+            {{ post.title }}
+        </a>
+    </h2>
+    <p class="date">
+        文章{{ post.title }}由{{ post.author }}发布于{{ post.publish_time }}
+    </p>
+    {% endfor %}
+    {% include "pagination.html" with page=posts %}
+{% endblock %}

@@ -1,0 +1,102 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>{% block title %}{% endblock %}</title>
+        <link href="{% static "css/base.css" %}" rel="stylesheet">
+        <style>
+            /*td{*/
+                /*white-space: nowrap;*/
+            /*}*/
+        </style>
+    </head>
+    <body>
+        <div id="header">
+            <span class="logo"><a href="{% url "dashboard" %}">Bookmarks</a></span>
+            {% if request.user.is_authenticated %}
+                <ul class="menu">
+
+                    <li {% if section == "dashboard" %}class="selected"{% endif %}>
+                        <a href="{% url "dashboard" %}">仪表盘</a>
+                    </li>
+                    <li {% if section == "blog" %}class="selected"{% endif %}>
+                        <a href="{% url "blog:post_list_all" %}">博客</a>
+                    </li>
+                    <li {% if section == "images" %}class="selected"{% endif %}>
+                        <a href="{% url "images:list" %}">图片</a>
+                    </li>
+                    <li {% if section == "people" %}class="selected"{% endif %}>
+                        <a href="{% url "user_list" %}">人物</a>
+                    </li>
+                    <li {% if section == "zhaopin" %}class="selected"{% endif %}>
+                        <a href="{% url "zhaopin_all" %}">招聘</a>
+                    </li>
+                </ul>
+            {% else %}
+                <ul class="menu">
+                    <li {% if section == "blog" %}class="selected"{% endif %}>
+                            <a href="{% url "blog:post_list_all" %}">博客</a>
+                    </li>
+                    <li {% if section == "images" %}class="selected"{% endif %}>
+                        <a href="{% url "images:list" %}">图片</a>
+                    </li>
+                    <li {% if section == "zhaopin"%}class="selected"{% endif %}>
+                        <a href="{% url "zhaopin_all" %}">招聘</a>
+                    </li>
+                </ul>
+            {% endif %}
+            <span class="user">
+                {% if request.user.is_authenticated %}
+                    {% if request.user.first_name == None %}
+                    Hello {{ request.user.first_name }}
+                    {% else %}
+                    Hello {{ request.user.username }}
+                {% endif %}
+                <a href="{% url "password_change" %}">修改密码</a>
+                <a href="{% url "edit" %}">修改资料</a>
+                <a href="{% url "logout" %}">退出</a>
+                {% else %}
+                <a href="{% url "login" %}">请登录</a>&nbsp;&nbsp;&nbsp;&nbsp;
+                <a href="{% url "register" %}">注册</a>
+                {% endif %}
+            </span>
+        </div>
+        {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+            <li class="{{ message.tags }}">
+            {{ message|safe }}
+                <a href="#" class="close"> </a>
+            </li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        <div id="content">
+            {% block content %}
+            {% endblock %}
+        </div>
+    </body>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/
+jquery.min.js"></script>
+<script src=" http://cdn.jsdelivr.net/jquery.cookie/1.4.1/jquery.
+cookie.min.js "></script>
+<script>
+  var csrftoken = $.cookie('csrftoken');
+  function csrfSafeMethod(method) {
+    // these HTTP methods do not require CSRF protection
+    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+}
+$.ajaxSetup({
+  beforeSend: function(xhr, settings) {
+    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+      xhr.setRequestHeader("X-CSRFToken", csrftoken);
+  }
+}
+});
+$(document).ready(function(){
+    {% block domready %}
+    {% endblock %}
+  });
+</script>
+</html>
